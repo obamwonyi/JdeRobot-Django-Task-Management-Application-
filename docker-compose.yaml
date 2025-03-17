@@ -1,0 +1,56 @@
+services:
+  # Django app image setup
+  django_app:
+    container_name: task_management_app
+    image: python:3.9-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=True
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: >
+      bash -c "pip install --no-cache-dir -r requirements.txt &&
+               python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - task_management_app_network
+
+  # PostgreSql database image setup
+  db:
+    image: postgres
+    container_name: task_management_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: task_management
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - task_management_app_network
+
+  # Adminer image setup
+  adminer:
+    image: adminer
+    container_name: task_management_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - task_management_app_network
+    depends_on:
+      - db
+
+networks:
+  task_management_app_network:
+    name: task_management_app_network
+
+volumes:
+  postgres_data:
+    name: task_management_postgres_data
