@@ -1,10 +1,13 @@
 from pathlib import Path
 import environ
 import os
+from datetime import timedelta
 
 env = environ.Env(
     DEBUG=(bool, False)
 )
+
+AUTH_USER_MODEL = 'users.User'
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,6 +28,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third Party apps--------------
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'drf_yasg',
+    # Apps
+    'users',
+    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +92,43 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token lifetime
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Refresh token lifetime
+    'ROTATE_REFRESH_TOKENS': False,                 # Whether to rotate refresh tokens
+    'BLACKLIST_AFTER_ROTATION': True,               # Blacklist old tokens after rotation
+    'UPDATE_LAST_LOGIN': False,                     # Update the last login field
+    'ALGORITHM': 'HS256',                           # Encryption algorithm
+    'SIGNING_KEY': SECRET_KEY,                      # Use Django's SECRET_KEY
+    'AUTH_HEADER_TYPES': ('Bearer',),               # Authorization header type
+}
 
 LANGUAGE_CODE = 'en-us'
 
