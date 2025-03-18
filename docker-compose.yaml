@@ -2,7 +2,7 @@ services:
   # Django app image setup
   django_app:
     container_name: task_management_app
-    image: python:3.9-slim
+    image: python:3.12-slim
     working_dir: /app
     volumes:
       - .:/app
