@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django.db import IntegrityError
 from users.models import User
 from users.serializers import UserSerializer, UserRegistrationSerializer
+from rest_framework.decorators import action
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -51,3 +52,11 @@ class UserViewSet(viewsets.ModelViewSet):
                     )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['GET'], url_path='me')
+    def me(self, request):
+        """
+        Get the current authenticated user's profile
+        """
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)

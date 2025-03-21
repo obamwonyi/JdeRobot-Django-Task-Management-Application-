@@ -30,7 +30,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     # App URLs
-    path("api/user", include("users.urls")),
+    path("api/user/", include("users.urls")),
     path("", include("tasks.urls")),
 
     # API documentation URLs for swagger
