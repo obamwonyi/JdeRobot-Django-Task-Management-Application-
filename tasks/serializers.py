@@ -23,3 +23,5 @@ class TaskSerializer(serializers.ModelSerializer):
             'category', 'category_id', 'due_date', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
+
+    title = serializers.CharField(required=True)

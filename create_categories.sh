@@ -11,7 +11,7 @@ python manage.py migrate
 # Create initial categories
 python manage.py shell <<EOF
 from tasks.models import Category
-categories = ['work', 'personal', 'groceries)']
+categories = ['work', 'personal', 'groceries']
 for category_name in categories:
     Category.objects.get_or_create(name=category_name)
 EOF

@@ -1,14 +1,11 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from .models import Task, Category
 from .serializers import TaskSerializer, CategorySerializer
 from django.shortcuts import render
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-
-
 
 def index(request):
     """
@@ -35,6 +32,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         else:
             raise PermissionDenied("You must be logged in to create a task.")
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['put'])
     def bulk_update(self, request):
@@ -47,7 +49,6 @@ class TaskViewSet(viewsets.ModelViewSet):
                 serializer.save()
                 updated_tasks.append(serializer.data)
         return Response(updated_tasks)
-
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
