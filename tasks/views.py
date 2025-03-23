@@ -23,12 +23,15 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Task.objects.filter(user=self.request.user)
+            return Task.objects.filter(user=self.request.user).order_by('order')
         return Task.objects.none()
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
-            serializer.save(user=self.request.user)
+            # Set the initial order for new tasks
+            last_task = Task.objects.filter(user=self.request.user).order_by('-order').first()
+            new_order = (last_task.order + 1) if last_task else 0
+            serializer.save(user=self.request.user, order=new_order)
         else:
             raise PermissionDenied("You must be logged in to create a task.")
 

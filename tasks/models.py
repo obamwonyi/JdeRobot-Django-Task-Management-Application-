@@ -23,6 +23,10 @@ class Task(models.Model):
     due_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['order']
